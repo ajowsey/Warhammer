@@ -1,28 +1,28 @@
 #pragma once
+#include "modelClass.h"
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
 #include <iostream>
 #include <stdint.h>
 
 #include <string>
-class Unit {
+class Unit : private Model {
 private:
   std::string name;
-  uint8_t strength;
-  uint8_t agility;
+
+public:
   uint8_t unitModelCount;
   uint8_t unitMove;
   uint8_t unitToughness;
-  uint8_t unitSave = 5;
-  uint8_t unitInvuln = 7;
-  uint8_t unitFeelNoPain = 7;
+  uint8_t unitSaveModifier = 0;
+  uint8_t unitInvulnModifier = 0;
+  uint8_t unitFeelNoPainModifier = 0;
   uint8_t unitWounds;
   uint8_t unitAttacks;
   uint8_t unitOC;
 
-public:
   // Constructor
-  Unit(const std::string &newName, int newStrength, int newAgility);
+  Unit(const std::string &newName);
   // Getters
   std::string getName() const;
   uint8_t getMove() const;
