@@ -1,5 +1,5 @@
 #pragma once
-#include "modelClass.h"
+#include "model.h"
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
 #include <iostream>
