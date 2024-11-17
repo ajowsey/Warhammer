@@ -1,3 +1,4 @@
+#include "battleEngine.h"
 #include <cassert> // For unit testing
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
@@ -7,65 +8,82 @@
 int rollD6() { return rand() % 6 + 1; }
 
 // Function to check a hit based on Weapon Skill (WS) or Ballistic Skill (BS)
-bool rollToHit(int skill) { return rollD6() >= skill; }
+bool rollToHit(int skill, int roll) { return rollD6() >= skill; }
 
-// Function to check a wound based on Strength (S) and Toughness (T)
-bool rollToWound(int strength, int toughness, int roll) {
+bool rollToWound(int attackingWeaponStrength, int defendingArmourToughness,
+                 int roll) {
   int woundRequirement;
 
-  switch (strength - toughness) {
-  case 0:
-    woundRequirement = 4;
-    break;
-  case 1:
-    woundRequirement = 3;
-    break;
-  case 2:
-  case 3:
-  case 4:
-  case 5:
+  // Check double strength (2+ to wound)
+  if (attackingWeaponStrength >= defendingArmourToughness * 2) {
     woundRequirement = 2;
-    break;
-  case -1:
-    woundRequirement = 5;
-    break;
-  default:
-    woundRequirement = (strength < toughness) ? 6 : 2;
-    break;
   }
+  // Check half strength (6+ to wound)
+  else if (attackingWeaponStrength * 2 <= defendingArmourToughness) {
+    woundRequirement = 6;
+  }
+  // Check greater strength (3+ to wound)
+  else if (attackingWeaponStrength > defendingArmourToughness) {
+    woundRequirement = 3;
+  }
+  // Check equal strength (4+ to wound)
+  else if (attackingWeaponStrength == defendingArmourToughness) {
+    woundRequirement = 4;
+  }
+  // Check lesser strength (5+ to wound)
+  else { // attackingWeaponStrength < defendingArmourToughness
+    woundRequirement = 5;
+  }
+
   return roll >= woundRequirement;
 }
 
 // Function to check a save based on Armor Save (SV) and Armor Penetration (AP)
-bool rollToSave(int save, int ap) { return rollD6() >= (save - ap); }
+bool rollToSave(int save, int ap, int roll) { return roll >= (save - ap); }
 
-// Main battle function
-void attackRolls(int numAttacks, int ws, int strength, int ap, int damage,
-                 int toughness, int save) {
-  srand(time(0)); // Seed random number generator
+AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
+                                  int attackerWeaponStrength,
+                                  int attackerWeaponAp,
+                                  int attackerWeaponDamage, int targetToughness,
+                                  int targetSave) {
 
-  int successfulWounds = 0;
+  srand(time(0));
+  AttackResult results;
 
-  // Roll for hits
   for (int i = 0; i < numAttacks; i++) {
-    if (rollToHit(ws)) {
-      // Roll to wound
-      if (rollToWound(strength, toughness, rollD6())) {
-        // Roll for saving throw
-        if (!rollToSave(save, ap)) {
-          // Defender failed the save, apply damage
-          std::cout << "Hit! Damage dealt: " << damage << "\n";
-          successfulWounds++;
-        } else {
-          std::cout << "Save successful!\n";
-        }
-      } else {
-        std::cout << "Failed to wound.\n";
-      }
-    } else {
-      std::cout << "Missed.\n";
+    // Step 1: Hit roll
+    if (!rollToHit(attackerWeaponSkill, rollD6())) {
+      //std::cout << "Missed.\n";
+      continue;
     }
+    results.successfulHits++;
+
+    // Step 2: Wound roll
+    if (!rollToWound(attackerWeaponStrength, targetToughness, rollD6())) {
+      //std::cout << "Failed to wound.\n";
+      continue;
+    }
+    results.successfulWounds++;
+
+    // Step 3: Save roll
+    if (rollToSave(targetSave, attackerWeaponAp, rollD6())) {
+      //std::cout << "Save successful!\n";
+      continue;
+    }
+    results.failedSaves++;
+
+    // Apply damage
+    results.totalDamage += attackerWeaponDamage;
+    //std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n";
   }
 
-  std::cout << "Total successful wounds: " << successfulWounds << "\n";
+  std::cout << "Results:\n"
+            << "Hits: " << results.successfulHits << "/" << numAttacks << "\n"
+            << "Wounds: " << results.successfulWounds << "/"
+            << results.successfulHits << "\n"
+            << "Failed Saves: " << results.failedSaves << "/"
+            << results.successfulWounds << "\n"
+            << "Total Damage: " << results.totalDamage << "\n";
+
+  return results;
 }
