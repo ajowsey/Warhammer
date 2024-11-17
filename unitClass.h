@@ -13,7 +13,9 @@ private:
   uint8_t unitModeCount;
   uint8_t unitMove;
   uint8_t unitToughness;
-  uint8_t 
+  uint8_t unitSave;
+  uint8_t unitInvuln = 0;
+  uint8_t unitFeelNoPain = 0;
 
 public:
   // Constructor
