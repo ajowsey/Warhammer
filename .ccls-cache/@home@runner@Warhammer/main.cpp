@@ -4,7 +4,21 @@
 #include <ctime>   // For seeding random number generator
 #include <iostream>
 
+// Unit tests for rollToWound function
+void runUnitTests() {
+  // Seed the random number generator for consistent results during testing
+  srand(42); // Fixed seed for predictable unit test results
+
+  // Test case: Strength equals Toughness (roll needed >= 4)
+  assert(rollToWound(4, 4, 0) == false);
+
+  // Print confirmation if tests pass
+  std::cout << "All unit tests passed!" << std::endl;
+}
+
 int main() {
+
+  runUnitTests();
 
   int numAttacks = 5;
   int ws = 4;        // Hitting on a 4+

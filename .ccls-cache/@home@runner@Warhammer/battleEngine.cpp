@@ -10,8 +10,7 @@ int rollD6() { return rand() % 6 + 1; }
 bool rollToHit(int skill) { return rollD6() >= skill; }
 
 // Function to check a wound based on Strength (S) and Toughness (T)
-bool rollToWound(int strength, int toughness) {
-  int roll = rollD6();
+bool rollToWound(int strength, int toughness, int roll) {
   int woundRequirement;
 
   switch (strength - toughness) {
@@ -37,30 +36,6 @@ bool rollToWound(int strength, int toughness) {
   return roll >= woundRequirement;
 }
 
-// Unit tests for rollToWound function
-void runUnitTests() {
-  // Seed the random number generator for consistent results during testing
-  srand(42); // Fixed seed for predictable unit test results
-
-  // Test case: Strength equals Toughness (roll needed >= 4)
-  assert(rollToWound(4, 4) == true || rollToWound(4, 4) == false);
-
-  // Test case: Strength is 1 higher than Toughness (roll needed >= 3)
-  assert(rollToWound(5, 4) == true || rollToWound(5, 4) == false);
-
-  // Test case: Strength is 2+ higher than Toughness (roll needed >= 2)
-  assert(rollToWound(6, 4) == true || rollToWound(6, 4) == false);
-
-  // Test case: Strength is 1 lower than Toughness (roll needed >= 5)
-  assert(rollToWound(3, 4) == true || rollToWound(3, 4) == false);
-
-  // Test case: Strength is much lower than Toughness (roll needed >= 6)
-  assert(rollToWound(2, 5) == true || rollToWound(2, 5) == false);
-
-  // Print confirmation if tests pass
-  std::cout << "All unit tests passed!" << std::endl;
-}
-
 // Function to check a save based on Armor Save (SV) and Armor Penetration (AP)
 bool rollToSave(int save, int ap) { return rollD6() >= (save - ap); }
 
@@ -75,7 +50,7 @@ void attackRolls(int numAttacks, int ws, int strength, int ap, int damage,
   for (int i = 0; i < numAttacks; i++) {
     if (rollToHit(ws)) {
       // Roll to wound
-      if (rollToWound(strength, toughness)) {
+      if (rollToWound(strength, toughness, rollD6())) {
         // Roll for saving throw
         if (!rollToSave(save, ap)) {
           // Defender failed the save, apply damage
