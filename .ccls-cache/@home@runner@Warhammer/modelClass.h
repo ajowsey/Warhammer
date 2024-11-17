@@ -5,7 +5,8 @@
 #include <stdint.h>
 
 #include <string>
-class Unit {
+
+class Model {
 private:
   std::string name;
   uint8_t strength;
@@ -22,7 +23,7 @@ private:
 
 public:
   // Constructor
-  Unit(const std::string &newName, int newStrength, int newAgility);
+  Model(const std::string &newName, int newStrength, int newAgility);
   // Getters
   std::string getName() const;
   uint8_t getMove() const;

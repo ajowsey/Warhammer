@@ -10,12 +10,15 @@ private:
   std::string name;
   uint8_t strength;
   uint8_t agility;
-  uint8_t unitModeCount;
+  uint8_t unitModelCount;
   uint8_t unitMove;
   uint8_t unitToughness;
-  uint8_t unitSave;
-  uint8_t unitInvuln = 0;
-  uint8_t unitFeelNoPain = 0;
+  uint8_t unitSave = 5;
+  uint8_t unitInvuln = 7;
+  uint8_t unitFeelNoPain = 7;
+  uint8_t unitWounds;
+  uint8_t unitAttacks;
+  uint8_t unitOC;
 
 public:
   // Constructor
