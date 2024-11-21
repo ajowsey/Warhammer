@@ -3,6 +3,7 @@
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
 #include <iostream>
+#include <assert.h>
 
 // Unit tests for rollToWound function
 void runUnitTests() {
@@ -38,15 +39,35 @@ int main() {
   int attackerWeaponSkill = 4;    // Hitting on a 4+
   int attackerWeaponStrength = 4; // Strength of the weapon
   int attackerWeaponAp = -1;      // Armor Penetration
-  int attackerWeaponDamage = 2;   // Damage dealt per unsaved wound
-  int targetToughness = 3;        // Toughness of the target
-  int targetSave = 5;             // Save characteristic of the target
+
+  int attackerWeaponDamage = 2; // Damage dealt per unsaved wound
+  int targetToughness = 3;      // Toughness of the target
+  int targetSave = 5;           // Save characteristic of the target
 
   attackRolls(numAttacks, attackerWeaponSkill, attackerWeaponStrength,
               attackerWeaponAp, attackerWeaponDamage, targetToughness,
               targetSave);
 
-  Unit hero("Aragorn");
-  hero.displayStats();
-  return 0;
+  std::cout << std::endl;
+
+  // Create a unit of Space Marines
+  Unit spaceMarines("Tactical Squad");
+
+  // Add some models
+  Model sergeant("Sergeant", 6, 4, 3, 0, 0, 2, 2, 1);
+  Model marine("Space Marine", 6, 4, 3, 0, 0, 2, 1, 1);
+
+  spaceMarines.addModel(sergeant);
+  for (int i = 0; i < 4; ++i) { // Add 4 regular marines
+    spaceMarines.addModel(marine);
+  }
+
+  // Display unit information
+  spaceMarines.displayUnit();
+
+  // Remove a model (casualty)
+  spaceMarines.removeModel(1);
+
+  std::cout << "\nAfter taking a casualty:\n";
+  spaceMarines.displayUnit();
 }

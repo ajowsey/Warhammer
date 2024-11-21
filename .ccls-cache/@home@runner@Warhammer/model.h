@@ -1,45 +1,44 @@
+
+
 #pragma once
-#include <cstdlib> // For rand()
-#include <ctime>   // For seeding random number generator
-#include <iostream>
+#include <array>
 #include <stdint.h>
 #include <string>
 
 class Model {
+public:
+  enum StatType {
+    MOVE,
+    TOUGHNESS,
+    SAVE,
+    INVULN,
+    FEEL_NO_PAIN,
+    WOUNDS,
+    ATTACKS,
+    OC,
+    STRENGTH, // Deprecated
+    STAT_COUNT
+  };
+
+  Model(const std::string &newName = "", uint8_t newMove = 0,
+        uint8_t newToughness = 0, uint8_t newSave = 0, uint8_t newInvuln = 0,
+        uint8_t newFeelNoPain = 0, uint8_t newWounds = 0,
+        uint8_t newAttacks = 0, uint8_t newOC = 0);
+
+  template <StatType T> uint8_t get() const { return stats[T]; }
+
+  std::string getName() const { return name; }
+  void displayStats() const;
+
+  template <StatType T> void set(uint8_t value) { stats[T] = value; }
+
+  void setName(const std::string &newName) { name = newName; }
+
 private:
   std::string name;
-  uint8_t modelStrength;
-  uint8_t modelMove;
-  uint8_t modelToughness;
-  uint8_t modelSave = 5;
-  uint8_t modelInvuln = 7;
-  uint8_t modelFeelNoPain = 7;
-  uint8_t modelWounds;
-  uint8_t modelAttacks;
-  uint8_t modelOC;
-
-public:
-  // Constructor
-  Model(const std::string &newName, uint8_t newMove, uint8_t newToughness,
-        uint8_t newSave, uint8_t newInvuln, uint8_t newFeelNoPain,
-        uint8_t newWounds, uint8_t newAttacks, uint8_t newOC);
-  Model();
-  // Getters
-  std::string getName() const;
-  uint8_t getMove() const;
-  uint8_t getToughness() const;
-  uint8_t getSave() const;
-  uint8_t getInvuln() const;
-  uint8_t getFeelNoPain() const;
-  uint8_t getWounds() const;
-  uint8_t getAttacks() const;
-  uint8_t getOC() const;
-  uint8_t getModelCount() const;
-
-  // Legacy, delete later
-  uint8_t getStrength() const;
-
-  // Methods
-  void displayStats() const;
-  bool updateModelCount();
+  std::array<uint8_t, STAT_COUNT> stats;
+  static constexpr const char *statNames[] = {
+      "Movement",          "Toughness",         "Save",
+      "Invulnerable Save", "Feel No Pain",      "Wounds",
+      "Attacks",           "Objective Control", "Strength"};
 };

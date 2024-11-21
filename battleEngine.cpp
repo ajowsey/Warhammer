@@ -1,4 +1,5 @@
 #include "battleEngine.h"
+#include "weapon.h"
 #include <cassert> // For unit testing
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
@@ -42,10 +43,9 @@ bool rollToWound(int attackingWeaponStrength, int defendingArmourToughness,
 bool rollToSave(int save, int ap, int roll) { return roll >= (save - ap); }
 
 AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
-                                  int attackerWeaponStrength,
-                                  int attackerWeaponAp,
-                                  int attackerWeaponDamage, int targetToughness,
-                                  int targetSave) {
+                         int attackerWeaponStrength, int attackerWeaponAp,
+                         int attackerWeaponDamage, int targetToughness,
+                         int targetSave) {
 
   srand(time(0));
   AttackResult results;
@@ -53,28 +53,28 @@ AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
   for (int i = 0; i < numAttacks; i++) {
     // Step 1: Hit roll
     if (!rollToHit(attackerWeaponSkill, rollD6())) {
-      //std::cout << "Missed.\n";
+      // std::cout << "Missed.\n";
       continue;
     }
     results.successfulHits++;
 
     // Step 2: Wound roll
     if (!rollToWound(attackerWeaponStrength, targetToughness, rollD6())) {
-      //std::cout << "Failed to wound.\n";
+      // std::cout << "Failed to wound.\n";
       continue;
     }
     results.successfulWounds++;
 
     // Step 3: Save roll
     if (rollToSave(targetSave, attackerWeaponAp, rollD6())) {
-      //std::cout << "Save successful!\n";
+      // std::cout << "Save successful!\n";
       continue;
     }
     results.failedSaves++;
 
     // Apply damage
     results.totalDamage += attackerWeaponDamage;
-    //std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n";
+    // std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n";
   }
 
   std::cout << "Results:\n"
@@ -86,4 +86,41 @@ AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
             << "Total Damage: " << results.totalDamage << "\n";
 
   return results;
+}
+
+ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
+
+  ShootingResult result;
+
+  /*
+  // Go through each model in the attacking unit
+  for (size_t i = 0; i < attackers.getSize(); ++i) {
+    const Model &attacker = attackers.getModel(i);
+    const Weapon &weapon = attacker.getSelectedWeapon();
+
+    // Get defender's stats (assuming uniform unit for simplicity)
+    const Model &defender = defenders.getModel(0);
+    int defenderToughness = defender.get<Model::TOUGHNESS>();
+    int defenderSave = defender.get<Model::SAVE>();
+
+    // Perform attack rolls for this model's weapon
+    AttackResult modelResult = attackRolls(
+        weapon.getAttacks(), weapon.getSkill(), weapon.getStrength(),
+        weapon.getAP(), weapon.getDamage(), defenderToughness, defenderSave);
+
+    // Accumulate results
+    result.totalShots += weapon.getAttacks();
+    result.attackResults.successfulHits += modelResult.successfulHits;
+    result.attackResults.successfulWounds += modelResult.successfulWounds;
+    result.attackResults.failedSaves += modelResult.failedSaves;
+    result.attackResults.totalDamage += modelResult.totalDamage;
+  }
+
+  // Calculate total effect
+  result.woundsDealt = result.attackResults.totalDamage;
+  result.modelsSlain =
+      result.woundsDealt / defenders.getModel(0).get<Model::WOUNDS>();
+  */
+
+  return result;
 }

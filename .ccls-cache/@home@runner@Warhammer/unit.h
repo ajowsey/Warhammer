@@ -1,43 +1,38 @@
 #pragma once
 #include "model.h"
-#include <cstdlib> // For rand()
-#include <ctime>   // For seeding random number generator
-#include <iostream>
-#include <stdint.h>
-
+#include <memory>
 #include <string>
-class Unit : private Model {
-private:
-  std::string name;
+#include <vector>
 
+class Unit {
 public:
-  uint8_t unitModelCount;
-  uint8_t unitMove;
-  uint8_t unitToughness;
-  uint8_t unitSaveModifier = 0;
-  uint8_t unitInvulnModifier = 0;
-  uint8_t unitFeelNoPainModifier = 0;
-  uint8_t unitWounds;
-  uint8_t unitAttacks;
-  uint8_t unitOC;
-
   // Constructor
-  Unit(const std::string &newName);
+  Unit(const std::string &unitName = "");
+
+  // Add/Remove models
+  void addModel(const Model &model);
+  void removeModel(size_t index);
+
   // Getters
-  std::string getName() const;
-  uint8_t getMove() const;
-  uint8_t getToughness() const;
-  uint8_t getSave() const;
-  uint8_t getWounds() const;
-  uint8_t getAttacks() const;
-  uint8_t getOC() const;
-  uint8_t getModelCount() const;
+  size_t getSize() const { return models.size(); }
+  std::string getName() const { return unitName; }
+  const Model &getModel(size_t index) const;
 
-  // Legacy, delete later
-  uint8_t getStrength() const;
-  uint8_t getAgility() const;
+  // Unit-wide operations
+  void displayUnit() const;
+  int getTotalWounds() const;
+  int getRemainingWounds() const;
+  int getUnitStrength() const; // Total number of models × their individual OC
 
-  // Methods
-  void displayStats() const;
-  bool updateModelCount();
+  // Utility functions
+  bool isDestroyed() const { return models.empty(); }
+  bool isBelow_50_Percent() const;
+
+  // Unit coherency check (models must be within 2" of another model)
+  bool hasCoherency() const { return true; } // Placeholder for now
+
+private:
+  std::string unitName;
+  std::vector<Model> models;
 };
+
