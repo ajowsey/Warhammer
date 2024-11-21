@@ -1,9 +1,9 @@
 #include "battleEngine.h"
 #include "unit.h"
+#include <assert.h>
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
 #include <iostream>
-#include <assert.h>
 
 // Unit tests for rollToWound function
 void runUnitTests() {
@@ -32,42 +32,39 @@ void runUnitTests() {
 }
 
 int main() {
+  Weapon boltRifle("Bolt Rifle", 1, 3, 4, 0, 1);
+  Weapon plasmaPistol("Plasma Pistol", 1, 3, 7, -3, 1);
 
-  runUnitTests();
+  Model scoutTemplate("Scout", 6, 4, 4, 0, 0, 1, 1, 1);
+  scoutTemplate.addAvailableWeapon(boltRifle);
+  scoutTemplate.addAvailableWeapon(plasmaPistol);
+  scoutTemplate.selectWeapon(0); // Select bolt rifle
 
-  int numAttacks = 5;
-  int attackerWeaponSkill = 4;    // Hitting on a 4+
-  int attackerWeaponStrength = 4; // Strength of the weapon
-  int attackerWeaponAp = -1;      // Armor Penetration
+  Model scoutSergeant = scoutTemplate;
+  scoutSergeant.selectWeapon(1); // Select plasma pistol
 
-  int attackerWeaponDamage = 2; // Damage dealt per unsaved wound
-  int targetToughness = 3;      // Toughness of the target
-  int targetSave = 5;           // Save characteristic of the target
-
-  attackRolls(numAttacks, attackerWeaponSkill, attackerWeaponStrength,
-              attackerWeaponAp, attackerWeaponDamage, targetToughness,
-              targetSave);
-
-  std::cout << std::endl;
-
-  // Create a unit of Space Marines
-  Unit spaceMarines("Tactical Squad");
-
-  // Add some models
-  Model sergeant("Sergeant", 6, 4, 3, 0, 0, 2, 2, 1);
-  Model marine("Space Marine", 6, 4, 3, 0, 0, 2, 1, 1);
-
-  spaceMarines.addModel(sergeant);
-  for (int i = 0; i < 4; ++i) { // Add 4 regular marines
-    spaceMarines.addModel(marine);
+  Unit scoutSquad("Scout Squad");
+  scoutSquad.addModel(scoutSergeant); // Add sergeant with plasma pistol
+  for (int i = 0; i < 4; i++) {
+    scoutSquad.addModel(scoutTemplate);
   }
+  // scoutSquad.displayUnit();
 
-  // Display unit information
-  spaceMarines.displayUnit();
+  Weapon multimelta("Multi-melta", 2, 3, 8, -4, 6);
+  Model hellbruteModel("Hellbrute", 6, 7, 2, 0, 0, 8, 4, 3);
+  hellbruteModel.addAvailableWeapon(multimelta);
+  hellbruteModel.selectWeapon(0);
 
-  // Remove a model (casualty)
-  spaceMarines.removeModel(1);
+  Unit hellbrute("Hellbrute");
+  hellbrute.addModel(hellbruteModel);
+  // hellbrute.displayUnit();
 
-  std::cout << "\nAfter taking a casualty:\n";
-  spaceMarines.displayUnit();
+  ShootingResult result = shootingPhase(scoutSquad, hellbrute);
+
+  std::cout << "Shooting Phase Results:" << std::endl;
+  std::cout << "Total Shots: " << result.totalShots << std::endl;
+  std::cout << "Wounds Dealt: " << result.woundsDealt << std::endl;
+  std::cout << "Models Slain: " << result.modelsSlain << std::endl;
+
+  return 0;
 }

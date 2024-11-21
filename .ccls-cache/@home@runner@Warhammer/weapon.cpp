@@ -26,9 +26,6 @@ public:
   void addAvailableWeapon(const Weapon &weapon);
   void selectWeapon(size_t index);
   const Weapon &getSelectedWeapon() const { return *selectedWeapon; }
-  const std::vector<Weapon> &getAvailableWeapons() const {
-    return availableWeapons;
-  }
 
   template <StatType T> uint8_t get() const { return stats[T]; }
 

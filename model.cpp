@@ -20,9 +20,32 @@ Model::Model(const std::string &newName, uint8_t newMove, uint8_t newToughness,
 void Model::displayStats() const {
   std::cout << "Name: " << name << std::endl;
   for (size_t i = 0; i < STAT_COUNT; ++i) {
-    if (i != STRENGTH) { // Skip deprecated strength stat
-      std::cout << statNames[i] << ": " << static_cast<int>(stats[i])
+    std::cout << statNames[i] << ": " << static_cast<int>(stats[i])
+              << std::endl;
+  }
+
+  if (selectedWeapon) {
+    std::cout << "Selected Weapon: " << selectedWeapon->getName() << std::endl;
+  }
+
+  if (!availableWeapons.empty()) {
+    std::cout << "Available Weapons:" << std::endl;
+    for (size_t i = 0; i < availableWeapons.size(); ++i) {
+      std::cout << "  " << i + 1 << ". " << availableWeapons[i].getName()
                 << std::endl;
     }
   }
+}
+
+void Model::addAvailableWeapon(const Weapon &weapon) {
+  availableWeapons.push_back(weapon);
+  if (!selectedWeapon && !availableWeapons.empty()) {
+    selectedWeapon = std::make_shared<Weapon>(availableWeapons[0]);
+  }
+}
+void Model::selectWeapon(size_t index) {
+    if (index >= availableWeapons.size()) {
+        throw std::out_of_range("Weapon index out of range");
+    }
+    selectedWeapon = std::make_shared<Weapon>(availableWeapons[index]);
 }

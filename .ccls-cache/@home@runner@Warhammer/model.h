@@ -1,9 +1,9 @@
-
-
 #pragma once
+#include "weapon.h"
 #include <array>
-#include <stdint.h>
+#include <memory>
 #include <string>
+#include <vector>
 
 class Model {
 public:
@@ -26,13 +26,17 @@ public:
         uint8_t newAttacks = 0, uint8_t newOC = 0);
 
   template <StatType T> uint8_t get() const { return stats[T]; }
-
   std::string getName() const { return name; }
   void displayStats() const;
-
   template <StatType T> void set(uint8_t value) { stats[T] = value; }
-
   void setName(const std::string &newName) { name = newName; }
+
+  void addAvailableWeapon(const Weapon &weapon);
+  void selectWeapon(size_t index);
+  const Weapon &getSelectedWeapon() const { return *selectedWeapon; }
+  const std::vector<Weapon> &getAvailableWeapons() const {
+    return availableWeapons;
+  }
 
 private:
   std::string name;
@@ -41,4 +45,7 @@ private:
       "Movement",          "Toughness",         "Save",
       "Invulnerable Save", "Feel No Pain",      "Wounds",
       "Attacks",           "Objective Control", "Strength"};
+
+  std::vector<Weapon> availableWeapons;
+  std::shared_ptr<Weapon> selectedWeapon;
 };

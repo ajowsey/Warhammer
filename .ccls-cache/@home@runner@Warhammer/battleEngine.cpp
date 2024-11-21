@@ -53,28 +53,29 @@ AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
   for (int i = 0; i < numAttacks; i++) {
     // Step 1: Hit roll
     if (!rollToHit(attackerWeaponSkill, rollD6())) {
-      // std::cout << "Missed.\n";
+      std::cout << "Missed.\n" << std::endl;
       continue;
     }
     results.successfulHits++;
 
     // Step 2: Wound roll
     if (!rollToWound(attackerWeaponStrength, targetToughness, rollD6())) {
-      // std::cout << "Failed to wound.\n";
+      std::cout << "Failed to wound.\n" << std::endl;
       continue;
     }
     results.successfulWounds++;
 
     // Step 3: Save roll
     if (rollToSave(targetSave, attackerWeaponAp, rollD6())) {
-      // std::cout << "Save successful!\n";
+      std::cout << "Save successful!\n" << std::endl;
       continue;
     }
     results.failedSaves++;
 
     // Apply damage
     results.totalDamage += attackerWeaponDamage;
-    // std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n";
+    std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n"
+              << std::endl;
   }
 
   std::cout << "Results:\n"
@@ -92,7 +93,6 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
 
   ShootingResult result;
 
-  /*
   // Go through each model in the attacking unit
   for (size_t i = 0; i < attackers.getSize(); ++i) {
     const Model &attacker = attackers.getModel(i);
@@ -120,7 +120,6 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
   result.woundsDealt = result.attackResults.totalDamage;
   result.modelsSlain =
       result.woundsDealt / defenders.getModel(0).get<Model::WOUNDS>();
-  */
 
   return result;
 }
