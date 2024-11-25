@@ -1,15 +1,13 @@
 #include "battleEngine.h"
-#include "weapon.h"
+#include "../weapon.h"
 #include <cassert> // For unit testing
 #include <cstdlib> // For rand()
 #include <ctime>   // For seeding random number generator
 #include <iostream>
 
-// Function to simulate a single D6 roll
-int rollD6() { return rand() % 6 + 1; }
 
 // Function to check a hit based on Weapon Skill (WS) or Ballistic Skill (BS)
-bool rollToHit(int skill, int roll) { return rollD6() >= skill; }
+bool rollToHit(int skill, int roll) { return roll >= skill; }
 
 bool rollToWound(int attackingWeaponStrength, int defendingArmourToughness,
                  int roll) {
@@ -45,46 +43,44 @@ bool rollToSave(int save, int ap, int roll) { return roll >= (save - ap); }
 AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
                          int attackerWeaponStrength, int attackerWeaponAp,
                          int attackerWeaponDamage, int targetToughness,
-                         int targetSave) {
-
-  srand(time(0));
+                         int targetSave, DiceRoller diceRoller) {
   AttackResult results;
 
   for (int i = 0; i < numAttacks; i++) {
     // Step 1: Hit roll
-    if (!rollToHit(attackerWeaponSkill, rollD6())) {
-      std::cout << "Missed.\n" << std::endl;
+    int hitRoll = diceRoller();
+    std::cout << "Hit Roll: " << hitRoll << std::endl;
+    if (!rollToHit(attackerWeaponSkill, hitRoll)) {
+      std::cout << "Missed!" << std::endl;
       continue;
     }
     results.successfulHits++;
+    std::cout << "Hit!" << std::endl;
 
     // Step 2: Wound roll
-    if (!rollToWound(attackerWeaponStrength, targetToughness, rollD6())) {
-      std::cout << "Failed to wound.\n" << std::endl;
+    int woundRoll = diceRoller();
+    std::cout << "Wound Roll: " << woundRoll << std::endl;
+    if (!rollToWound(attackerWeaponStrength, targetToughness, woundRoll)) {
+      std::cout << "Wound failed!" << std::endl;
       continue;
     }
     results.successfulWounds++;
+    std::cout << "Wound successful!" << std::endl;
 
     // Step 3: Save roll
-    if (rollToSave(targetSave, attackerWeaponAp, rollD6())) {
-      std::cout << "Save successful!\n" << std::endl;
+    int saveRoll = diceRoller();
+    std::cout << "Save Roll: " << saveRoll << std::endl;
+    if (rollToSave(targetSave, attackerWeaponAp, saveRoll)) {
+      std::cout << "Save Successful!" << std::endl;
       continue;
     }
     results.failedSaves++;
+    std::cout << "Save failed!" << std::endl;
 
     // Apply damage
     results.totalDamage += attackerWeaponDamage;
-    std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n"
-              << std::endl;
+    std::cout << "Damage applied: " << attackerWeaponDamage << std::endl;
   }
-
-  std::cout << "Results:\n"
-            << "Hits: " << results.successfulHits << "/" << numAttacks << "\n"
-            << "Wounds: " << results.successfulWounds << "/"
-            << results.successfulHits << "\n"
-            << "Failed Saves: " << results.failedSaves << "/"
-            << results.successfulWounds << "\n"
-            << "Total Damage: " << results.totalDamage << "\n";
 
   return results;
 }
@@ -97,6 +93,10 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
   for (size_t i = 0; i < attackers.getSize(); ++i) {
     const Model &attacker = attackers.getModel(i);
     const Weapon &weapon = attacker.getSelectedWeapon();
+
+    std::cout << "==========================================" << std::endl;
+    std::cout << attacker.getName() << " " << i + 1
+              << ": with Weapon: " << weapon.getName() << std::endl;
 
     // Get defender's stats (assuming uniform unit for simplicity)
     const Model &defender = defenders.getModel(0);
@@ -114,6 +114,7 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
     result.attackResults.successfulWounds += modelResult.successfulWounds;
     result.attackResults.failedSaves += modelResult.failedSaves;
     result.attackResults.totalDamage += modelResult.totalDamage;
+    std::cout << attacker.getName() << " done. " << std::endl;
   }
 
   // Calculate total effect

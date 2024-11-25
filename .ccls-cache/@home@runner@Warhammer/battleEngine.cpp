@@ -45,46 +45,34 @@ bool rollToSave(int save, int ap, int roll) { return roll >= (save - ap); }
 AttackResult attackRolls(int numAttacks, int attackerWeaponSkill,
                          int attackerWeaponStrength, int attackerWeaponAp,
                          int attackerWeaponDamage, int targetToughness,
-                         int targetSave) {
-
-  srand(time(0));
+                         int targetSave, DiceRoller diceRoller) {
   AttackResult results;
 
   for (int i = 0; i < numAttacks; i++) {
     // Step 1: Hit roll
-    if (!rollToHit(attackerWeaponSkill, rollD6())) {
-      std::cout << "Missed.\n" << std::endl;
+    int hitRoll = diceRoller();
+    if (!rollToHit(attackerWeaponSkill, hitRoll)) {
       continue;
     }
     results.successfulHits++;
 
     // Step 2: Wound roll
-    if (!rollToWound(attackerWeaponStrength, targetToughness, rollD6())) {
-      std::cout << "Failed to wound.\n" << std::endl;
+    int woundRoll = diceRoller();
+    if (!rollToWound(attackerWeaponStrength, targetToughness, woundRoll)) {
       continue;
     }
     results.successfulWounds++;
 
     // Step 3: Save roll
-    if (rollToSave(targetSave, attackerWeaponAp, rollD6())) {
-      std::cout << "Save successful!\n" << std::endl;
+    int saveRoll = diceRoller();
+    if (rollToSave(targetSave, attackerWeaponAp, saveRoll)) {
       continue;
     }
     results.failedSaves++;
 
     // Apply damage
     results.totalDamage += attackerWeaponDamage;
-    std::cout << "Hit! Damage dealt: " << attackerWeaponDamage << "\n"
-              << std::endl;
   }
-
-  std::cout << "Results:\n"
-            << "Hits: " << results.successfulHits << "/" << numAttacks << "\n"
-            << "Wounds: " << results.successfulWounds << "/"
-            << results.successfulHits << "\n"
-            << "Failed Saves: " << results.failedSaves << "/"
-            << results.successfulWounds << "\n"
-            << "Total Damage: " << results.totalDamage << "\n";
 
   return results;
 }
@@ -97,6 +85,10 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
   for (size_t i = 0; i < attackers.getSize(); ++i) {
     const Model &attacker = attackers.getModel(i);
     const Weapon &weapon = attacker.getSelectedWeapon();
+
+    std::cout << "==========================================" << std::endl;
+    std::cout << attacker.getName() << " " << i + 1
+              << ": with Weapon: " << weapon.getName() << std::endl;
 
     // Get defender's stats (assuming uniform unit for simplicity)
     const Model &defender = defenders.getModel(0);
@@ -114,6 +106,7 @@ ShootingResult shootingPhase(const Unit &attackers, const Unit &defenders) {
     result.attackResults.successfulWounds += modelResult.successfulWounds;
     result.attackResults.failedSaves += modelResult.failedSaves;
     result.attackResults.totalDamage += modelResult.totalDamage;
+    std::cout << attacker.getName() << " done. " << std::endl;
   }
 
   // Calculate total effect

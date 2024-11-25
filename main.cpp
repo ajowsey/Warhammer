@@ -1,4 +1,4 @@
-#include "battleEngine.h"
+#include "battleEngine/battleEngine.h"
 #include "unit.h"
 #include <assert.h>
 #include <cstdlib> // For rand()
@@ -61,10 +61,13 @@ int main() {
 
   ShootingResult result = shootingPhase(scoutSquad, hellbrute);
 
+  std::cout << "==========================================" << std::endl;
   std::cout << "Shooting Phase Results:" << std::endl;
   std::cout << "Total Shots: " << result.totalShots << std::endl;
   std::cout << "Wounds Dealt: " << result.woundsDealt << std::endl;
   std::cout << "Models Slain: " << result.modelsSlain << std::endl;
+
+  
 
   return 0;
 }
