@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ajows\\Coding\\Warhammer\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6FE60F-852F-4B41-9259-A61D4D05B580}|WarhammerVS.vcxproj|C:\\Users\\ajows\\Coding\\Warhammer\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0C6FE60F-852F-4B41-9259-A61D4D05B580}|WarhammerVS.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\ajows\\Coding\\Warhammer\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Users\\ajows\\Coding\\Warhammer\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-01-12T14:47:07.555Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
